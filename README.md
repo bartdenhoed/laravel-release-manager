@@ -1,5 +1,10 @@
 # Laravel Release Manager
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
+[![Total Downloads](https://img.shields.io/packagist/dt/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
+[![License](https://img.shields.io/packagist/l/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
+[![PHP Version](https://img.shields.io/packagist/php-v/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
+
 Automated release management for Laravel packages with Conventional Commits support and automatic changelog generation.
 
 ## Features
