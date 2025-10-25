@@ -27,8 +27,8 @@ Automated release management for Laravel packages with Conventional Commits supp
 # 1. Install
 composer require --dev alegiac/laravel-release-manager
 
-# 2. Simple setup
-php artisan release:setup
+# 2. Interactive setup (recommended for first time)
+php artisan release:setup --interactive
 
 # 3. Make changes and commit
 git commit -m "feat: add awesome feature"
@@ -39,6 +39,12 @@ php artisan release
 # 5. Push
 git push --follow-tags
 ```
+
+**Note:** Use `--interactive` for a guided setup that asks for:
+- Initial version
+- Branch setup
+- Repository creation/linking
+- Remote push preferences
 
 ### Complete Setup with Repository
 
@@ -278,7 +284,8 @@ php artisan release:setup [options]
 ```
 
 **Options:**
-- `--version=X.Y.Z` - Specify initial version (default: 0.0.1)
+- `--initial-version=X.Y.Z` - Specify initial version (default: 0.0.1)
+- `--interactive` - Interactive setup mode (asks for all options)
 - `--repo=URL` - Link to existing repository
 - `--create-repo` - Create new repository on GitHub (requires GitHub CLI)
 - `--workspace=NAME` - Bitbucket workspace for repo creation
@@ -292,6 +299,9 @@ php artisan release:setup [options]
 ```bash
 # Basic setup with default version (v0.0.1)
 php artisan release:setup
+
+# Interactive setup (recommended for first-time users)
+php artisan release:setup --interactive
 
 # Setup with custom version
 php artisan release:setup --initial-version=1.0.0
@@ -321,7 +331,7 @@ php artisan release:setup \
     --branches
 
 # Reinitialize (force overwrite)
-php artisan release:setup --force --version=2.0.0
+php artisan release:setup --force --initial-version=2.0.0
 ```
 
 **What it does:**
@@ -338,7 +348,7 @@ php artisan release:setup --force --version=2.0.0
 ### Release Command
 
 ```bash
-php artisan release [--patch] [--minor] [--major] [--dry-run] [--no-interaction]
+php artisan release [--patch] [--minor] [--major] [--dry-run] [--no-confirm]
 ```
 
 Options:
@@ -346,7 +356,7 @@ Options:
 - `--minor` - Force minor version bump (1.0.0 -> 1.1.0)
 - `--major` - Force major version bump (1.0.0 -> 2.0.0)
 - `--dry-run` - Show what would happen without making changes
-- `--no-interaction` - Run without confirmation prompts
+- `--no-confirm` - Run without confirmation prompts
 
 ## Package Structure
 

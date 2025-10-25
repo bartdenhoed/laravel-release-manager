@@ -2,9 +2,9 @@
 
 Questa guida mostra esempi pratici di utilizzo del package in vari scenari.
 
-## Scenario 1: Nuova Laravel Application
+## Scenario 1: Nuova Laravel Application (Modalità Interattiva)
 
-Hai appena creato una nuova applicazione Laravel e vuoi configurare tutto da zero.
+Hai appena creato una nuova applicazione Laravel e vuoi configurare tutto da zero con una guida passo-passo.
 
 ```bash
 # 1. Creare nuova Laravel app
@@ -14,7 +14,23 @@ cd my-awesome-app
 # 2. Installare il package
 composer require --dev alegiac/laravel-release-manager
 
-# 3. Setup completo con GitHub
+# 3. Setup interattivo (consigliato per principianti)
+php artisan release:setup --interactive
+
+# Il comando chiederà:
+# Initial version [0.0.1]: 0.1.0
+# Set up standard branches? (yes/no) [yes]: yes
+# Set up remote repository? (yes/no) [yes]: yes
+# Create a new repository on GitHub/Bitbucket? (yes/no) [no]: yes
+# Repository name [my-awesome-app]: 
+# Platform [GitHub]: GitHub
+# Push branches and tags to remote? (yes/no) [yes]: yes
+```
+
+**Alternativa: Setup Non-Interattivo**
+
+```bash
+# Setup completo con opzioni da linea di comando
 php artisan release:setup \
     --initial-version=0.1.0 \
     --create-repo \
@@ -270,7 +286,7 @@ jobs:
         run: |
           php artisan release \
             --${{ github.event.inputs.release_type }} \
-            --no-interaction
+            --no-confirm
             
       - name: Push changes
         run: git push --follow-tags

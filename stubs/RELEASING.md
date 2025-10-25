@@ -14,7 +14,7 @@ php artisan release:setup
 ./release-setup.sh
 
 # Con versione custom
-php artisan release:setup --version=1.0.0
+php artisan release:setup --initial-version=1.0.0
 ./release-setup.sh 1.0.0
 ```
 

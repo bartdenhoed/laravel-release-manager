@@ -24,7 +24,7 @@ class ReleaseCommand extends Command
                             {--minor : Force minor version bump}
                             {--major : Force major version bump}
                             {--dry-run : Show what would happen without making changes}
-                            {--no-interaction : Skip confirmation prompts}';
+                            {--no-confirm : Skip confirmation prompts}';
 
     /**
      * The console command description.
@@ -123,7 +123,7 @@ class ReleaseCommand extends Command
         }
 
         // Confirm
-        if (!$this->option('no-interaction')) {
+        if (!$this->option('no-confirm')) {
             if (!$this->confirm("Proceed with release {$newVersion}?", true)) {
                 $this->warn('Release cancelled');
                 return Command::SUCCESS;

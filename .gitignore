@@ -6,5 +6,7 @@ composer.lock
 .vscode/
 *.log
 coverage/
-SOCIAL_POST.md
+
+# Marketing materials (not for distribution)
 ARTICLE.md
+SOCIAL_POST.md
