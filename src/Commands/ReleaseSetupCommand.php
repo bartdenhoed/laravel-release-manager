@@ -20,13 +20,14 @@ class ReleaseSetupCommand extends Command
      * @var string
      */
     protected $signature = 'release:setup 
-                            {--version=0.0.1 : Initial version to start from}
+                            {--initial-version=0.0.1 : Initial version to start from}
                             {--repo= : Repository URL (GitHub/Bitbucket)}
                             {--create-repo : Create repository on GitHub (requires gh CLI)}
                             {--workspace= : Bitbucket workspace for repo creation}
                             {--private : Make repository private (default: public)}
                             {--branches : Setup standard branches (main, develop, stage)}
                             {--push : Push branches and tags to remote}
+                            {--interactive : Interactive setup mode}
                             {--force : Overwrite existing setup}';
 
     /**
@@ -87,13 +88,24 @@ class ReleaseSetupCommand extends Command
         }
 
         // Get initial version
-        $version = $this->option('version');
-        
-        // Validate version format
-        if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
-            $this->error("Invalid version format: {$version}");
-            $this->info('Version must be in format: MAJOR.MINOR.PATCH (e.g., 0.0.1, 1.0.0)');
-            return Command::FAILURE;
+        if ($this->option('interactive')) {
+            $version = $this->ask('Initial version', '0.0.1');
+            
+            // Validate version format
+            while (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+                $this->error("Invalid version format: {$version}");
+                $this->info('Version must be in format: MAJOR.MINOR.PATCH (e.g., 0.0.1, 1.0.0)');
+                $version = $this->ask('Initial version', '0.0.1');
+            }
+        } else {
+            $version = $this->option('initial-version');
+            
+            // Validate version format
+            if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+                $this->error("Invalid version format: {$version}");
+                $this->info('Version must be in format: MAJOR.MINOR.PATCH (e.g., 0.0.1, 1.0.0)');
+                return Command::FAILURE;
+            }
         }
 
         $this->info("Initial version: v{$version}");
@@ -134,8 +146,39 @@ class ReleaseSetupCommand extends Command
         $this->info('🎉 Release System initialized successfully!');
         $this->line('');
 
+        // Interactive mode - ask for additional setup
+        $setupBranches = false;
+        $setupRepo = false;
+        $doPush = false;
+        
+        if ($this->option('interactive')) {
+            $this->line('');
+            $this->info('📋 Additional Setup Options');
+            $this->line('');
+            
+            $setupBranches = $this->confirm('Set up standard branches? (main, develop, stage)', true);
+            
+            if ($this->confirm('Set up remote repository?', true)) {
+                if ($this->confirm('Create a new repository on GitHub/Bitbucket?', false)) {
+                    $setupRepo = 'create';
+                } else {
+                    $setupRepo = 'link';
+                }
+            }
+            
+            if ($setupRepo) {
+                $doPush = $this->confirm('Push branches and tags to remote?', true);
+            }
+            
+            $this->line('');
+        } else {
+            $setupBranches = $this->option('branches');
+            $setupRepo = $this->option('create-repo') ? 'create' : ($this->option('repo') ? 'link' : false);
+            $doPush = $this->option('push');
+        }
+
         // Setup branches if requested
-        if ($this->option('branches')) {
+        if ($setupBranches) {
             $this->info('📋 Setting up standard branches...');
             $results = $gitManager->setupStandardBranches();
             
@@ -150,21 +193,21 @@ class ReleaseSetupCommand extends Command
         }
 
         // Handle repository creation or linking
-        if ($this->option('create-repo')) {
+        if ($setupRepo === 'create') {
             $this->handleRepositoryCreation($gitManager);
-        } elseif ($this->option('repo')) {
+        } elseif ($setupRepo === 'link') {
             $this->handleRepositoryLink($gitManager);
         }
 
         // Push if requested
-        if ($this->option('push')) {
+        if ($doPush) {
             $this->handlePush($gitManager);
         }
 
         $this->line('');
         $this->comment('Next steps:');
         
-        if (!$this->option('repo') && !$this->option('create-repo')) {
+        if (!$setupRepo) {
             $this->line('1. Link your repository:');
             $this->line('   git remote add origin <repository-url>');
             $this->line('');
@@ -176,9 +219,13 @@ class ReleaseSetupCommand extends Command
         $this->line('3. Create a release:');
         $this->line('   php artisan release');
         $this->line('');
-        $this->line('4. Push to repository:');
-        $this->line('   git push --follow-tags');
-        $this->line('');
+        
+        if (!$doPush) {
+            $this->line('4. Push to repository:');
+            $this->line('   git push --follow-tags');
+            $this->line('');
+        }
+        
         $this->comment('For more information, see RELEASING.md');
 
         return Command::SUCCESS;
@@ -238,6 +285,15 @@ class ReleaseSetupCommand extends Command
         $this->info('🔗 Linking repository...');
         
         $repoUrl = $this->option('repo');
+        
+        if (!$repoUrl && $this->option('interactive')) {
+            $repoUrl = $this->ask('Repository URL (e.g., https://github.com/user/repo.git)');
+        }
+        
+        if (!$repoUrl) {
+            $this->warn('No repository URL provided, skipping');
+            return;
+        }
         
         if ($gitManager->addRemote($repoUrl)) {
             $this->info("✓ Remote 'origin' configured: {$repoUrl}");

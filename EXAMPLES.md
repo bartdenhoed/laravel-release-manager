@@ -16,7 +16,7 @@ composer require --dev alegiac/laravel-release-manager
 
 # 3. Setup completo con GitHub
 php artisan release:setup \
-    --version=0.1.0 \
+    --initial-version=0.1.0 \
     --create-repo \
     --private \
     --branches \
@@ -56,7 +56,7 @@ Hai un progetto esistente con git già configurato.
 composer require --dev alegiac/laravel-release-manager
 
 # 2. Setup semplice
-php artisan release:setup --version=1.0.0
+php artisan release:setup --initial-version=1.0.0
 
 # 3. Link a repository esistente (se non già configurato)
 git remote add origin git@github.com:username/existing-project.git
@@ -78,7 +78,7 @@ composer require --dev alegiac/laravel-release-manager
 
 # 2. Setup con Bitbucket
 php artisan release:setup \
-    --version=1.0.0 \
+    --initial-version=1.0.0 \
     --repo=git@bitbucket.org:myworkspace/my-project.git \
     --branches
 
@@ -111,7 +111,7 @@ composer require --dev alegiac/laravel-release-manager
 
 # 4. Setup completo
 php artisan release:setup \
-    --version=0.1.0 \
+    --initial-version=0.1.0 \
     --create-repo \
     --branches
 
@@ -133,7 +133,7 @@ git push --follow-tags
 
 ```bash
 composer require --dev alegiac/laravel-release-manager
-php artisan release:setup --version=0.1.0 --branches
+php artisan release:setup --initial-version=0.1.0 --branches
 ```
 
 ### Feature Development
@@ -221,7 +221,7 @@ for package in packages/*; do
         # Setup con repo specifico
         PACKAGE_NAME=$(basename "$package")
         php artisan release:setup \
-            --version=0.1.0 \
+            --initial-version=0.1.0 \
             --repo=git@github.com:username/$PACKAGE_NAME.git \
             --branches
         
@@ -329,7 +329,7 @@ return [
 ### 1. Setup Rapido per Package
 
 ```bash
-alias pkg-setup='php artisan release:setup --version=0.1.0 --branches'
+alias pkg-setup='php artisan release:setup --initial-version=0.1.0 --branches'
 pkg-setup
 ```
 
@@ -381,7 +381,7 @@ for pkg in "${PACKAGES[@]}"; do
     composer require --dev alegiac/laravel-release-manager
     
     php artisan release:setup \
-        --version=0.1.0 \
+        --initial-version=0.1.0 \
         --repo=git@github.com:yourname/$pkg.git \
         --branches \
         --push

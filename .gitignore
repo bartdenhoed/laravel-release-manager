@@ -6,4 +6,5 @@ composer.lock
 .vscode/
 *.log
 coverage/
-
+SOCIAL_POST.md
+ARTICLE.md

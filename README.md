@@ -2,6 +2,8 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
 [![Total Downloads](https://img.shields.io/packagist/dt/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
+[![Tests](https://github.com/alegiac/laravel-release-manager/actions/workflows/tests.yml/badge.svg)](https://github.com/alegiac/laravel-release-manager/actions/workflows/tests.yml)
+[![Code Coverage](https://codecov.io/gh/alegiac/laravel-release-manager/branch/main/graph/badge.svg)](https://codecov.io/gh/alegiac/laravel-release-manager)
 [![License](https://img.shields.io/packagist/l/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
 [![PHP Version](https://img.shields.io/packagist/php-v/alegiac/laravel-release-manager.svg?style=flat-square)](https://packagist.org/packages/alegiac/laravel-release-manager)
 
@@ -46,14 +48,14 @@ composer require --dev alegiac/laravel-release-manager
 
 # 2. Full setup with GitHub repository creation
 php artisan release:setup \
-    --version=1.0.0 \
+    --initial-version=1.0.0 \
     --create-repo \
     --branches \
     --push
 
 # 3. Or link to existing repository
 php artisan release:setup \
-    --version=1.0.0 \
+    --initial-version=1.0.0 \
     --repo=git@github.com:username/repo.git \
     --branches \
     --push
@@ -82,7 +84,7 @@ This will:
 You can specify a custom initial version:
 
 ```bash
-php artisan release:setup --version=1.0.0
+php artisan release:setup --initial-version=1.0.0
 ```
 
 ### Publishing Assets
@@ -292,23 +294,23 @@ php artisan release:setup [options]
 php artisan release:setup
 
 # Setup with custom version
-php artisan release:setup --version=1.0.0
+php artisan release:setup --initial-version=1.0.0
 
 # Setup and link to existing GitHub repository
 php artisan release:setup \
-    --version=1.0.0 \
+    --initial-version=1.0.0 \
     --repo=git@github.com:username/my-app.git
 
 # Complete setup: create GitHub repo + branches + push
 php artisan release:setup \
-    --version=1.0.0 \
+    --initial-version=1.0.0 \
     --create-repo \
     --branches \
     --push
 
 # Setup with Bitbucket
 php artisan release:setup \
-    --version=1.0.0 \
+    --initial-version=1.0.0 \
     --repo=git@bitbucket.org:workspace/repo.git \
     --branches
 
