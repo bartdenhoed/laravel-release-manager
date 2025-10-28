@@ -4,6 +4,7 @@ namespace Alegiac\ReleaseManager\Commands;
 
 use Illuminate\Console\Command;
 use Alegiac\ReleaseManager\Services\ReleaseManager;
+use Alegiac\ReleaseManager\Services\NotificationService;
 
 /**
  * Release Command
@@ -24,7 +25,8 @@ class ReleaseCommand extends Command
                             {--minor : Force minor version bump}
                             {--major : Force major version bump}
                             {--dry-run : Show what would happen without making changes}
-                            {--no-confirm : Skip confirmation prompts}';
+                            {--no-confirm : Skip confirmation prompts}
+                            {--no-notify : Skip sending notifications}';
 
     /**
      * The console command description.
@@ -142,6 +144,11 @@ class ReleaseCommand extends Command
         exec("git tag -a '{$newVersion}' -m 'Release {$newVersion}'");
         $this->info('✓ Tag created');
 
+        // Send notifications if enabled and not skipped
+        if (!$this->option('no-notify')) {
+            $this->sendNotifications($newVersion, $analysis, $changelogEntry, $commits);
+        }
+
         $this->line('');
         $this->info("✅ Release {$newVersion} created successfully!");
         $this->line('');
@@ -152,6 +159,48 @@ class ReleaseCommand extends Command
         $this->comment('Or use: git push --follow-tags');
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Send release notifications
+     *
+     * @param string $version
+     * @param array $analysis
+     * @param string $changelogEntry
+     * @param array $commits
+     * @return void
+     */
+    protected function sendNotifications(string $version, array $analysis, string $changelogEntry, array $commits): void
+    {
+        try {
+            $notificationService = new NotificationService();
+            
+            if (!$notificationService->isNotificationsEnabled()) {
+                $this->line('');
+                $this->comment('💬 Notifications are disabled');
+                return;
+            }
+
+            $this->line('');
+            $this->info('📢 Sending notifications...');
+
+            $success = $notificationService->sendReleaseNotification(
+                $version,
+                $analysis,
+                $changelogEntry,
+                $commits
+            );
+
+            if ($success) {
+                $enabledDrivers = $notificationService->getEnabledDrivers();
+                $this->info('✓ Notifications sent to: ' . implode(', ', $enabledDrivers));
+            } else {
+                $this->warn('⚠ Failed to send notifications');
+            }
+
+        } catch (\Exception $e) {
+            $this->warn('⚠ Notification error: ' . $e->getMessage());
+        }
     }
 }
 

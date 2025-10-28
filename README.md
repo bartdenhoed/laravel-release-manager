@@ -16,6 +16,7 @@ Automated release management for Laravel packages with Conventional Commits supp
 - **Changelog Generation** - Automatically generates and updates CHANGELOG.md
 - **Breaking Changes Detection** - Automatically detects breaking changes
 - **Git Tag Creation** - Creates annotated git tags
+- **Release Notifications** - Send notifications to Telegram, Slack, Discord
 - **Laravel Artisan Command** - Easy to use artisan command
 - **Standalone Script** - Can also be used as a standalone bash script
 
@@ -241,6 +242,63 @@ All notable changes to this project will be documented in this file.
 - initial release
 ```
 
+## Notifications
+
+The package supports sending release notifications to external services like Telegram, Slack, and Discord.
+
+### Setup Notifications
+
+1. **Enable notifications** in your `.env`:
+```bash
+RELEASE_MANAGER_NOTIFICATIONS_ENABLED=true
+RELEASE_MANAGER_NOTIFICATION_DRIVER=telegram
+```
+
+2. **Configure your preferred service**:
+
+#### Telegram
+```bash
+RELEASE_MANAGER_TELEGRAM_ENABLED=true
+RELEASE_MANAGER_TELEGRAM_BOT_TOKEN=your_bot_token
+RELEASE_MANAGER_TELEGRAM_CHAT_ID=your_chat_id
+```
+
+#### Slack
+```bash
+RELEASE_MANAGER_SLACK_ENABLED=true
+RELEASE_MANAGER_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+RELEASE_MANAGER_SLACK_CHANNEL=#releases
+RELEASE_MANAGER_SLACK_USERNAME=Release Bot
+```
+
+#### Discord
+```bash
+RELEASE_MANAGER_DISCORD_ENABLED=true
+RELEASE_MANAGER_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+RELEASE_MANAGER_DISCORD_USERNAME=Release Bot
+```
+
+### Usage
+
+Notifications are sent automatically after each release:
+
+```bash
+php artisan release
+```
+
+To skip notifications:
+```bash
+php artisan release --no-notify
+```
+
+### Notification Content
+
+Notifications include:
+- Release version and type (major/minor/patch)
+- Number of commits
+- Changelog summary
+- Timestamp
+
 ## Configuration
 
 The package works out of the box, but you can customize behavior by modifying the published script.
@@ -348,7 +406,7 @@ php artisan release:setup --force --initial-version=2.0.0
 ### Release Command
 
 ```bash
-php artisan release [--patch] [--minor] [--major] [--dry-run] [--no-confirm]
+php artisan release [--patch] [--minor] [--major] [--dry-run] [--no-confirm] [--no-notify]
 ```
 
 Options:
@@ -357,6 +415,7 @@ Options:
 - `--major` - Force major version bump (1.0.0 -> 2.0.0)
 - `--dry-run` - Show what would happen without making changes
 - `--no-confirm` - Run without confirmation prompts
+- `--no-notify` - Skip sending notifications
 
 ## Package Structure
 

@@ -59,6 +59,7 @@ class ReleaseManagerServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../stubs/RELEASING.md' => base_path('RELEASING.md'),
                 __DIR__.'/../stubs/CHANGELOG.md' => base_path('CHANGELOG.md'),
+                __DIR__.'/../stubs/NOTIFICATIONS.md' => base_path('NOTIFICATIONS.md'),
             ], 'release-manager-docs');
         }
     }

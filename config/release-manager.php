@@ -79,5 +79,49 @@ return [
         'feat_bumps_minor' => true,
         'fix_bumps_patch' => true,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for release notifications to external services.
+    |
+    */
+    'notifications' => [
+        'enabled' => env('RELEASE_MANAGER_NOTIFICATIONS_ENABLED', false),
+        'default_driver' => env('RELEASE_MANAGER_NOTIFICATION_DRIVER', 'telegram'),
+        
+        'drivers' => [
+            'telegram' => [
+                'enabled' => env('RELEASE_MANAGER_TELEGRAM_ENABLED', false),
+                'bot_token' => env('RELEASE_MANAGER_TELEGRAM_BOT_TOKEN'),
+                'chat_id' => env('RELEASE_MANAGER_TELEGRAM_CHAT_ID'),
+                'parse_mode' => env('RELEASE_MANAGER_TELEGRAM_PARSE_MODE', 'Markdown'),
+            ],
+            
+            'slack' => [
+                'enabled' => env('RELEASE_MANAGER_SLACK_ENABLED', false),
+                'webhook_url' => env('RELEASE_MANAGER_SLACK_WEBHOOK_URL'),
+                'channel' => env('RELEASE_MANAGER_SLACK_CHANNEL'),
+                'username' => env('RELEASE_MANAGER_SLACK_USERNAME', 'Release Bot'),
+                'icon_emoji' => env('RELEASE_MANAGER_SLACK_ICON_EMOJI', ':rocket:'),
+            ],
+            
+            'discord' => [
+                'enabled' => env('RELEASE_MANAGER_DISCORD_ENABLED', false),
+                'webhook_url' => env('RELEASE_MANAGER_DISCORD_WEBHOOK_URL'),
+                'username' => env('RELEASE_MANAGER_DISCORD_USERNAME', 'Release Bot'),
+                'avatar_url' => env('RELEASE_MANAGER_DISCORD_AVATAR_URL'),
+            ],
+        ],
+        
+        'template' => [
+            'include_changelog' => env('RELEASE_MANAGER_INCLUDE_CHANGELOG', true),
+            'include_commit_count' => env('RELEASE_MANAGER_INCLUDE_COMMIT_COUNT', true),
+            'include_release_type' => env('RELEASE_MANAGER_INCLUDE_RELEASE_TYPE', true),
+            'max_changelog_lines' => env('RELEASE_MANAGER_MAX_CHANGELOG_LINES', 10),
+        ],
+    ],
 ];
 
