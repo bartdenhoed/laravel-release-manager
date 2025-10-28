@@ -49,7 +49,7 @@ RELEASE_MANAGER_TELEGRAM_PARSE_MODE=Markdown
 RELEASE_MANAGER_SLACK_ENABLED=true
 
 # Webhook URL from Slack app
-RELEASE_MANAGER_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+RELEASE_MANAGER_SLACK_WEBHOOK_URL=<your_slack_webhook_url>
 
 # Channel to send notifications (optional)
 RELEASE_MANAGER_SLACK_CHANNEL=#releases
@@ -77,7 +77,7 @@ RELEASE_MANAGER_SLACK_ICON_EMOJI=:rocket:
 RELEASE_MANAGER_DISCORD_ENABLED=true
 
 # Webhook URL from Discord channel
-RELEASE_MANAGER_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1234567890123456789/abcdefghijklmnopqrstuvwxyz1234567890
+RELEASE_MANAGER_DISCORD_WEBHOOK_URL=<your_discord_webhook_url>
 
 # Bot username (optional)
 RELEASE_MANAGER_DISCORD_USERNAME=Release Bot
