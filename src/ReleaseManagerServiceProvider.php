@@ -60,6 +60,7 @@ class ReleaseManagerServiceProvider extends ServiceProvider
                 __DIR__.'/../stubs/RELEASING.md' => base_path('RELEASING.md'),
                 __DIR__.'/../stubs/CHANGELOG.md' => base_path('CHANGELOG.md'),
                 __DIR__.'/../stubs/NOTIFICATIONS.md' => base_path('NOTIFICATIONS.md'),
+                __DIR__.'/../stubs/AI_DESCRIPTIONS.md' => base_path('AI_DESCRIPTIONS.md'),
             ], 'release-manager-docs');
         }
     }

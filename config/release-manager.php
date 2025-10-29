@@ -123,5 +123,36 @@ return [
             'max_changelog_lines' => env('RELEASE_MANAGER_MAX_CHANGELOG_LINES', 10),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | AI Description
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for AI-generated human-readable descriptions of changes.
+    |
+    */
+    'ai_description' => [
+        'enabled' => env('RELEASE_MANAGER_AI_DESCRIPTION_ENABLED', false),
+        'provider' => env('RELEASE_MANAGER_AI_PROVIDER', 'openai'),
+        'template' => env('RELEASE_MANAGER_AI_TEMPLATE', 'default'), // 'default' or 'detailed'
+        
+        'openai' => [
+            'api_key' => env('OPENAI_API_KEY'),
+            'model' => env('RELEASE_MANAGER_OPENAI_MODEL', 'gpt-3.5-turbo'),
+            'max_tokens' => env('RELEASE_MANAGER_OPENAI_MAX_TOKENS', 1000),
+        ],
+        
+        'anthropic' => [
+            'api_key' => env('ANTHROPIC_API_KEY'),
+            'model' => env('RELEASE_MANAGER_ANTHROPIC_MODEL', 'claude-3-sonnet-20240229'),
+            'max_tokens' => env('RELEASE_MANAGER_ANTHROPIC_MAX_TOKENS', 1000),
+        ],
+        
+        'ollama' => [
+            'base_url' => env('RELEASE_MANAGER_OLLAMA_BASE_URL', 'http://localhost:11434'),
+            'model' => env('RELEASE_MANAGER_OLLAMA_MODEL', 'llama2'),
+        ],
+    ],
 ];
 

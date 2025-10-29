@@ -5,6 +5,7 @@ namespace Alegiac\ReleaseManager\Commands;
 use Illuminate\Console\Command;
 use Alegiac\ReleaseManager\Services\ReleaseManager;
 use Alegiac\ReleaseManager\Services\NotificationService;
+use Alegiac\ReleaseManager\Services\AIDescriptionService;
 
 /**
  * Release Command
@@ -26,7 +27,8 @@ class ReleaseCommand extends Command
                             {--major : Force major version bump}
                             {--dry-run : Show what would happen without making changes}
                             {--no-confirm : Skip confirmation prompts}
-                            {--no-notify : Skip sending notifications}';
+                            {--no-notify : Skip sending notifications}
+                            {--ai-description : Generate human-readable AI description of changes}';
 
     /**
      * The console command description.
@@ -115,6 +117,17 @@ class ReleaseCommand extends Command
         $this->info('📝 Generating changelog...');
         $changelogEntry = $releaseManager->generateChangelog($newVersion, $analysis);
         
+        // Generate AI description if requested
+        $aiDescription = null;
+        if ($this->option('ai-description')) {
+            $aiDescription = $this->generateAIDescription($newVersion, $analysis, $commits, $releaseType);
+            
+            // Add AI description to changelog entry
+            if ($aiDescription && $aiDescription['success']) {
+                $changelogEntry = $this->addAIDescriptionToChangelog($changelogEntry, $aiDescription['description']);
+            }
+        }
+        
         $this->line('');
         $this->line($changelogEntry);
         $this->line('');
@@ -201,6 +214,54 @@ class ReleaseCommand extends Command
         } catch (\Exception $e) {
             $this->warn('⚠ Notification error: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Generate AI description of changes
+     *
+     * @param string $version
+     * @param array $analysis
+     * @param array $commits
+     * @param string $releaseType
+     * @return array|null
+     */
+    protected function generateAIDescription(string $version, array $analysis, array $commits, string $releaseType): ?array
+    {
+        try {
+            $this->line('');
+            $this->info('🤖 Generating AI description...');
+
+            $aiService = new AIDescriptionService();
+            $result = $aiService->generateDescription($commits, $analysis, $version, $releaseType);
+
+            if ($result['success']) {
+                $this->info('✓ AI description generated and added to changelog');
+                return $result;
+            } else {
+                $this->warn('⚠ Failed to generate AI description: ' . $result['error']);
+                return null;
+            }
+
+        } catch (\Exception $e) {
+            $this->warn('⚠ AI description error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Add AI description to changelog entry
+     *
+     * @param string $changelogEntry
+     * @param string $aiDescription
+     * @return string
+     */
+    protected function addAIDescriptionToChangelog(string $changelogEntry, string $aiDescription): string
+    {
+        // Add AI description section to the changelog
+        $aiSection = "\n### AI Description\n\n" . $aiDescription . "\n";
+        
+        // Insert AI description before the end of the changelog entry
+        return $changelogEntry . $aiSection;
     }
 }
 

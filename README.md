@@ -17,6 +17,7 @@ Automated release management for Laravel packages with Conventional Commits supp
 - **Breaking Changes Detection** - Automatically detects breaking changes
 - **Git Tag Creation** - Creates annotated git tags
 - **Release Notifications** - Send notifications to Telegram, Slack, Discord
+- **AI Descriptions** - Generate human-readable descriptions of changes
 - **Laravel Artisan Command** - Easy to use artisan command
 - **Standalone Script** - Can also be used as a standalone bash script
 
@@ -299,6 +300,107 @@ Notifications include:
 - Changelog summary
 - Timestamp
 
+## AI Descriptions
+
+Generate human-readable descriptions of changes using AI to explain what changed, technical impacts, and user impacts.
+
+### Setup AI Descriptions
+
+1. **Enable AI descriptions** in your `.env`:
+```bash
+RELEASE_MANAGER_AI_DESCRIPTION_ENABLED=true
+RELEASE_MANAGER_AI_PROVIDER=openai
+```
+
+2. **Configure your AI provider**:
+
+#### OpenAI
+```bash
+OPENAI_API_KEY=your_openai_api_key
+RELEASE_MANAGER_OPENAI_MODEL=gpt-3.5-turbo
+RELEASE_MANAGER_OPENAI_MAX_TOKENS=1000
+```
+
+#### Anthropic (Claude)
+```bash
+ANTHROPIC_API_KEY=your_anthropic_api_key
+RELEASE_MANAGER_ANTHROPIC_MODEL=claude-3-sonnet-20240229
+RELEASE_MANAGER_ANTHROPIC_MAX_TOKENS=1000
+```
+
+#### Ollama (Local)
+```bash
+RELEASE_MANAGER_AI_PROVIDER=ollama
+RELEASE_MANAGER_OLLAMA_BASE_URL=http://localhost:11434
+RELEASE_MANAGER_OLLAMA_MODEL=llama2
+```
+
+### Usage
+
+Generate AI descriptions with your release:
+
+```bash
+php artisan release --ai-description
+```
+
+**Example output:**
+```
+🤖 Generating AI description...
+✓ AI description generated and added to changelog
+
+## [v1.2.0] - 2024-01-24
+
+### Features
+- add two-factor authentication system
+- add real-time dashboard updates
+
+### Bug Fixes
+- resolve session timeout on mobile
+- fix payment processing error
+
+### Performance
+- optimize database queries
+- add Redis caching
+
+### AI Description
+
+## Cosa è Cambiato
+
+Questa release introduce un sistema di autenticazione a due fattori (2FA) per migliorare la sicurezza degli account utente, insieme a ottimizzazioni delle performance per le query del database.
+
+## Impatto Lato Codice
+
+- Nuovo modello `TwoFactorAuth` per gestire i codici 2FA
+- Modifiche al controller `AuthController` per supportare la verifica 2FA
+- Aggiunta di middleware per proteggere le rotte sensibili
+- Nuove migrazioni per le tabelle 2FA
+
+## Impatto Lato Sistema
+
+- Miglioramento della sicurezza con autenticazione a due fattori
+- Ottimizzazione delle query N+1 nel dashboard utenti
+- Riduzione del tempo di caricamento del 40%
+- Aggiunta di logging per eventi di sicurezza
+
+## Impatto Lato Cliente
+
+- Gli utenti potranno abilitare 2FA nelle impostazioni account
+- Dashboard più veloce e reattivo
+- Maggiore sicurezza per i dati personali
+- Notifiche email per nuovi accessi sospetti
+```
+
+### Templates
+
+Choose between two description templates:
+
+- **Default**: Concise description (300 words max)
+- **Detailed**: Comprehensive analysis (500 words max)
+
+```bash
+RELEASE_MANAGER_AI_TEMPLATE=detailed
+```
+
 ## Configuration
 
 The package works out of the box, but you can customize behavior by modifying the published script.
@@ -406,7 +508,7 @@ php artisan release:setup --force --initial-version=2.0.0
 ### Release Command
 
 ```bash
-php artisan release [--patch] [--minor] [--major] [--dry-run] [--no-confirm] [--no-notify]
+php artisan release [--patch] [--minor] [--major] [--dry-run] [--no-confirm] [--no-notify] [--ai-description]
 ```
 
 Options:
@@ -416,6 +518,7 @@ Options:
 - `--dry-run` - Show what would happen without making changes
 - `--no-confirm` - Run without confirmation prompts
 - `--no-notify` - Skip sending notifications
+- `--ai-description` - Generate human-readable AI description of changes
 
 ## Package Structure
 
