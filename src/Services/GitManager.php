@@ -2,8 +2,6 @@
 
 namespace Alegiac\ReleaseManager\Services;
 
-use Illuminate\Support\Facades\Process;
-
 /**
  * Git Manager
  * 

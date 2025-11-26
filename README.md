@@ -561,8 +561,8 @@ laravel-release-manager/
 
 ## Requirements
 
-- PHP >= 8.1
-- Laravel >= 10.0
+- PHP >= 8.0
+- Laravel >= 8.0
 - Git
 
 ## Testing

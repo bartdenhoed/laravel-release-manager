@@ -66,7 +66,7 @@ class ReleaseManager
                     if (!isset($analysis['by_type'][$type])) {
                         $analysis['by_type'][$type] = [];
                     }
-                    $analysis['by_type'][$type][] = $message . $scope;
+                    $analysis['by_type'][$type][] = $message;
                 } else {
                     if (!isset($analysis['by_type']['other'])) {
                         $analysis['by_type']['other'] = [];
@@ -147,6 +147,10 @@ class ReleaseManager
 
         if (file_exists($changelogPath)) {
             $existingChangelog = file_get_contents($changelogPath);
+            
+            if ($existingChangelog === false) {
+                $existingChangelog = '';
+            }
             
             // Insert after the header (first 2 lines)
             $lines = explode("\n", $existingChangelog);

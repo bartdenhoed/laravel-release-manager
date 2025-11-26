@@ -101,8 +101,8 @@ class ReleaseSetupCommand extends Command
             $version = $this->option('initial-version');
             
             // Validate version format
-            if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
-                $this->error("Invalid version format: {$version}");
+            if (!is_string($version) || !preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+                $this->error("Invalid version format: " . ($version ?? 'null'));
                 $this->info('Version must be in format: MAJOR.MINOR.PATCH (e.g., 0.0.1, 1.0.0)');
                 return Command::FAILURE;
             }
@@ -247,7 +247,7 @@ class ReleaseSetupCommand extends Command
         if ($platform === 'GitHub') {
             $result = $gitManager->createGitHubRepository(
                 $repoName, 
-                $this->option('private')
+                (bool) $this->option('private')
             );
             
             if ($result['success']) {
@@ -260,13 +260,15 @@ class ReleaseSetupCommand extends Command
             $result = $gitManager->createBitbucketRepository(
                 $workspace,
                 $repoName,
-                $this->option('private')
+                (bool) $this->option('private')
             );
             
             $this->warn($result['message']);
             
             if ($this->confirm('Have you created the repository manually?')) {
-                $gitManager->addRemote($result['url']);
+                if (isset($result['url']) && is_string($result['url'])) {
+                    $gitManager->addRemote($result['url']);
+                }
                 $this->info('✓ Remote added');
             }
         }

@@ -119,7 +119,7 @@ class AIDescriptionService
      */
     protected function buildDefaultPrompt(array $commits, array $analysis, string $version, string $releaseType, string $commitList): string
     {
-        return "Analizza questi commit per una release {$releaseType} (v{$version}) e crea una descrizione umana professionale che spieghi:
+        return "Analizza questi commit per una release {$releaseType} ({$version}) e crea una descrizione umana professionale che spieghi:
 
 1. COSA È CAMBIATO: Riassumi le modifiche principali in linguaggio chiaro
 2. IMPATTI LATO CODICE: Quali parti del sistema sono state modificate
@@ -149,7 +149,7 @@ Rispondi in italiano, in formato markdown, massimo 300 parole. Sii specifico e p
         $perf = $analysis['by_type']['perf'] ?? [];
         $breaking = $analysis['has_breaking'] ? 'SÌ - Cambiamenti breaking' : 'NO';
 
-        return "Analizza questa release {$releaseType} (v{$version}) e crea una descrizione dettagliata per stakeholder tecnici e non tecnici.
+        return "Analizza questa release {$releaseType} ({$version}) e crea una descrizione dettagliata per stakeholder tecnici e non tecnici.
 
 CONTESTO:
 - Tipo release: {$releaseType}

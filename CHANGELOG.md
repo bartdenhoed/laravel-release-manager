@@ -15,11 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add human-readable change descriptions for stakeholders
 - Add AIDescriptionService for managing AI-generated content
 
+### Improvements
+
+- Add backward compatibility for Laravel 8+ and PHP 8.0+
+- Remove unused Process facade import
+- Update test matrix to include Laravel 8 and PHP 8.0
+
 ### Documentation
 
 - Add AI description configuration examples
 - Update README with AI description setup and usage
 - Add comprehensive AI provider configuration guide
+- Update requirements to reflect Laravel 8+ and PHP 8.0+ support
 
 ## [v1.1.0] - 2024-01-24
 
