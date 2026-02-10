@@ -137,6 +137,19 @@ return [
         'provider' => env('RELEASE_MANAGER_AI_PROVIDER', 'openai'),
         'template' => env('RELEASE_MANAGER_AI_TEMPLATE', 'default'), // 'default' or 'detailed'
         
+        /*
+        |--------------------------------------------------------------------------
+        | Custom Prompt
+        |--------------------------------------------------------------------------
+        |
+        | If set, this prompt is used instead of the built-in templates.
+        | Available placeholders:
+        | {releaseType}, {version}, {breaking}, {commitCount}, {commitList},
+        | {features}, {fixes}, {perf}
+        |
+        */
+        'custom_prompt' => env('RELEASE_MANAGER_AI_CUSTOM_PROMPT'),
+
         'openai' => [
             'api_key' => env('OPENAI_API_KEY'),
             'model' => env('RELEASE_MANAGER_OPENAI_MODEL', 'gpt-3.5-turbo'),
