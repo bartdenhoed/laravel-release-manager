@@ -9,9 +9,9 @@ use Alegiac\ReleaseManager\Services\AIDescriptionService;
 
 /**
  * Release Command
- * 
+ *
  * Artisan command for creating automated releases with changelog generation.
- * 
+ *
  * @package Alegiac\ReleaseManager\Commands
  */
 class ReleaseCommand extends Command
@@ -21,13 +21,14 @@ class ReleaseCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'release 
+    protected $signature = 'release
                             {--patch : Force patch version bump}
                             {--minor : Force minor version bump}
                             {--major : Force major version bump}
                             {--dry-run : Show what would happen without making changes}
                             {--no-confirm : Skip confirmation prompts}
                             {--no-notify : Skip sending notifications}
+                            {--no-push : Skip pushing commit and tag to origin}
                             {--ai-description : Generate human-readable AI description of changes}';
 
     /**
@@ -57,7 +58,7 @@ class ReleaseCommand extends Command
         // Get latest tag
         exec('git describe --tags --abbrev=0 2>/dev/null', $tagOutput);
         $latestTag = $tagOutput[0] ?? 'v0.0.0';
-        
+
         $this->info("Latest tag: {$latestTag}");
 
         // Parse version
@@ -69,7 +70,7 @@ class ReleaseCommand extends Command
 
         // Get commits since last tag
         exec("git log {$latestTag}..HEAD --pretty=format:'%s'", $commits);
-        
+
         if (empty($commits)) {
             $this->error('No commits found since last tag.');
             return Command::FAILURE;
@@ -116,18 +117,18 @@ class ReleaseCommand extends Command
         // Generate changelog
         $this->info('📝 Generating changelog...');
         $changelogEntry = $releaseManager->generateChangelog($newVersion, $analysis);
-        
+
         // Generate AI description if requested
         $aiDescription = null;
         if ($this->option('ai-description')) {
             $aiDescription = $this->generateAIDescription($newVersion, $analysis, $commits, $releaseType);
-            
+
             // Add AI description to changelog entry
             if ($aiDescription && $aiDescription['success']) {
                 $changelogEntry = $this->addAIDescriptionToChangelog($changelogEntry, $aiDescription['description']);
             }
         }
-        
+
         $this->line('');
         $this->line($changelogEntry);
         $this->line('');
@@ -157,6 +158,15 @@ class ReleaseCommand extends Command
         exec("git tag -a '{$newVersion}' -m 'Release {$newVersion}'");
         $this->info('✓ Tag created');
 
+        // Push commit and tag automatically
+        if (!$this->option('no-push')) {
+            exec('git rev-parse --abbrev-ref HEAD', $branchOutput);
+            $currentBranch = $branchOutput[0] ?? 'HEAD';
+            exec("git push origin {$currentBranch}");
+            exec("git push origin {$newVersion}");
+            $this->info('✓ Release pushed to origin');
+        }
+
         // Send notifications if enabled and not skipped
         if (!$this->option('no-notify')) {
             $this->sendNotifications($newVersion, $analysis, $changelogEntry, $commits);
@@ -165,11 +175,11 @@ class ReleaseCommand extends Command
         $this->line('');
         $this->info("✅ Release {$newVersion} created successfully!");
         $this->line('');
-        $this->comment('To publish, run:');
-        $this->line('  git push origin ' . exec('git rev-parse --abbrev-ref HEAD'));
-        $this->line("  git push origin {$newVersion}");
-        $this->line('');
-        $this->comment('Or use: git push --follow-tags');
+        if ($this->option('no-push')) {
+            $this->comment('Push skipped (--no-push).');
+        } else {
+            $this->comment('Release commit and tag were pushed to origin.');
+        }
 
         return Command::SUCCESS;
     }
@@ -187,7 +197,7 @@ class ReleaseCommand extends Command
     {
         try {
             $notificationService = new NotificationService();
-            
+
             if (!$notificationService->isNotificationsEnabled()) {
                 $this->line('');
                 $this->comment('💬 Notifications are disabled');
@@ -259,9 +269,8 @@ class ReleaseCommand extends Command
     {
         // Add AI description section to the changelog
         $aiSection = "\n### AI Description\n\n" . $aiDescription . "\n";
-        
+
         // Insert AI description before the end of the changelog entry
         return $changelogEntry . $aiSection;
     }
 }
-
