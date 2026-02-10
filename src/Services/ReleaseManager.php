@@ -2,6 +2,8 @@
 
 namespace Alegiac\ReleaseManager\Services;
 
+use Illuminate\Support\Str;
+
 /**
  * Release Manager
  * 
@@ -120,7 +122,8 @@ class ReleaseManager
             if (isset($analysis['by_type'][$type]) && !empty($analysis['by_type'][$type])) {
                 $changelog .= "\n### {$label}\n\n";
                 foreach ($analysis['by_type'][$type] as $message) {
-                    $changelog .= "- {$message}\n";
+                    $formattedMessage = $this->formatCommitMessage($message);
+                    $changelog .= "- {$formattedMessage}\n";
                 }
             }
         }
@@ -128,11 +131,28 @@ class ReleaseManager
         if (isset($analysis['by_type']['other']) && !empty($analysis['by_type']['other'])) {
             $changelog .= "\n### Other Changes\n\n";
             foreach ($analysis['by_type']['other'] as $message) {
-                $changelog .= "- {$message}\n";
+                $formattedMessage = $this->formatCommitMessage($message);
+                $changelog .= "- {$formattedMessage}\n";
             }
         }
 
         return $changelog;
+    }
+
+    protected function formatCommitMessage(string $message): string
+    {
+        $trimmed = ltrim($message);
+
+        if ($trimmed === '') {
+            return $message;
+        }
+
+        $leadingWhitespaceLength = strlen($message) - strlen($trimmed);
+        $leadingWhitespace = $leadingWhitespaceLength > 0
+            ? substr($message, 0, $leadingWhitespaceLength)
+            : '';
+
+        return $leadingWhitespace . Str::ucfirst($trimmed);
     }
 
     /**
