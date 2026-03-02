@@ -98,6 +98,12 @@ class AIDescriptionService
             return "- " . $commit;
         }, $commits));
 
+        $customPrompt = Config::get('release-manager.ai_description.custom_prompt');
+
+        if (is_string($customPrompt) && trim($customPrompt) !== '') {
+            return $this->buildCustomPrompt($commits, $analysis, $version, $releaseType, $commitList, $customPrompt);
+        }
+
         $template = Config::get('release-manager.ai_description.template', 'default');
         
         if ($template === 'detailed') {
@@ -105,6 +111,44 @@ class AIDescriptionService
         }
 
         return $this->buildDefaultPrompt($commits, $analysis, $version, $releaseType, $commitList);
+    }
+
+    /**
+     * Build custom prompt
+     *
+     * @param array $commits
+     * @param array $analysis
+     * @param string $version
+     * @param string $releaseType
+     * @param string $commitList
+     * @param string $customPrompt
+     * @return string
+     */
+    protected function buildCustomPrompt(
+        array $commits,
+        array $analysis,
+        string $version,
+        string $releaseType,
+        string $commitList,
+        string $customPrompt
+    ): string {
+        $features = $analysis['by_type']['feat'] ?? [];
+        $fixes = $analysis['by_type']['fix'] ?? [];
+        $perf = $analysis['by_type']['perf'] ?? [];
+        $breaking = $analysis['has_breaking'] ? 'YES - Breaking changes' : 'NO';
+
+        $replacements = [
+            '{releaseType}' => $releaseType,
+            '{version}' => $version,
+            '{breaking}' => $breaking,
+            '{commitCount}' => (string) count($commits),
+            '{commitList}' => $commitList,
+            '{features}' => $features ? implode(', ', $features) : '',
+            '{fixes}' => $fixes ? implode(', ', $fixes) : '',
+            '{perf}' => $perf ? implode(', ', $perf) : '',
+        ];
+
+        return strtr($customPrompt, $replacements);
     }
 
     /**
